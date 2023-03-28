@@ -44,6 +44,76 @@ define('DB_NAME', 'database_name');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 
+// Crie um novo objeto PDO para conexão com o banco de dados
+try {
+    $pdo = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME, DB_USER, DB_PASS);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch(PDOException $e) {
+    die("ERROR: Could not connect to database. " . $e->getMessage());
+}
+
+// Defina o número da página atual (Não é necessário editar essa linha, matenha como está)
+$current_page = isset($_GET['page']) ? $_GET['page'] : 1;
+
+// Defina o número de resultados exibidos por página
+$limit = 1;
+
+// Calculando o offset para a consulta com base no número da página atual e no limite (Não é necessário editar essa linha, matenha como está)
+$offset = ($current_page - 1) * $limit;
+
+// Altere a consulta SELECT de acordo com suas necessidades, mas não altere o LIMIT nem o OFFSET.
+try {
+$stmt = $pdo->prepare("SELECT * FROM tbl_fotos_exclusivas LIMIT :limit OFFSET :offset");
+$stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+$stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+$stmt->execute();
+$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Defina aqui o nome amigável para cada uma das coluna que indicou na instrução SELECT (Linha 66). Caso tenha utilizado "*", escreva o nome de todas as colunas da tabela.
+$header_labels = array(
+    'id_anunciante' => 'ID',
+    'nome' => 'Nome',
+    'email' => 'Foto Perfil',
+    'telefone' => 'Email',
+    'login' => 'Login',
+    'password' => "Password",
+    'telefone' => "Telefone",
+    'celular' => "Celular"
+
+);
+
+// Gerando os resultados em uma tabela HTML
+echo '<table style="border-collapse: collapse; width: 100%; max-width: 800px; margin: auto;">';
+
+// Gerando os cabeçalhos das colunas
+echo '<tr style="background-color: #dddddd;">';
+foreach ($header_labels as $label) {
+    echo '<th style="padding: 8px; border: 1px solid #dddddd; text-align: left;">' . htmlspecialchars($label) . '</th>';
+}
+echo '</tr>';
+
+// Gerando as linhas de dados
+foreach ($result as $row) {
+    echo '<tr>';
+    foreach ($row as $value) {
+        echo '<td style="padding: 8px; border: 1px solid #dddddd;">' . htmlspecialchars($value) . '</td>';
+    }
+    echo '</tr>';
+}
+
+echo '</table>';
+
+// Informe a mesma tabela que forneceu na linha 66.
+$total_records = $pdo->query("SELECT COUNT(*) FROM tbl_anunciantes")->fetchColumn();
+$base_url = $_SERVER['PHP_SELF'];
+echo paginate($current_page, $total_records, $limit, $base_url);
+} catch(PDOException $e) {
+die("ERROR: Could not execute query. " . $e->getMessage());
+}
+
+// Fechando a conexão com o banco de dados
+$pdo = null;
+
+
 // Inclua a função de Paginação
 function paginate($current_page, $total_records, $limit, $base_url, $max_pages_to_display = 4) {
     $total_pages = ceil($total_records / $limit);
@@ -95,75 +165,6 @@ function paginate($current_page, $total_records, $limit, $base_url, $max_pages_t
 
     return $pagination;
 }
-
-// Defina o número da página atual
-$current_page = isset($_GET['page']) ? $_GET['page'] : 1;
-
-// Defina o número de resultados exibidos por página
-$limit = 1;
-
-// Calcule o offset para a consulta com base no número da página atual e no limite
-$offset = ($current_page - 1) * $limit;
-
-// Crie um novo objeto PDO para conexão com o banco de dados
-try {
-    $pdo = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME, DB_USER, DB_PASS);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
-    die("ERROR: Could not connect to database. " . $e->getMessage());
-}
-
-// Execute uma consulta SELECT com as cláusulas LIMIT e OFFSET para recuperar os dados da página atual
-try {
-$stmt = $pdo->prepare("SELECT * FROM tbl_fotos_exclusivas LIMIT :limit OFFSET :offset");
-$stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-$stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
-$stmt->execute();
-$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-// Defina aqui o nome amigável de cada coluna que indicou na instrução SELECT (Linha 118). Caso tenha utilizado "*", escreva o nome de todas as colunas da tabela.
-$header_labels = array(
-    'id_anunciante' => 'ID',
-    'nome' => 'Nome',
-    'email' => 'Foto Perfil',
-    'telefone' => 'Email',
-    'login' => 'Login',
-    'password' => "Password",
-    'telefone' => "Telefone",
-    'celular' => "Celular"
-
-);
-
-// Gere os resultados em uma tabela HTML com estilo CSS
-echo '<table style="border-collapse: collapse; width: 100%; max-width: 800px; margin: auto;">';
-
-// Gere os cabeçalhos das colunas com estilo CSS
-echo '<tr style="background-color: #dddddd;">';
-foreach ($header_labels as $label) {
-    echo '<th style="padding: 8px; border: 1px solid #dddddd; text-align: left;">' . htmlspecialchars($label) . '</th>';
-}
-echo '</tr>';
-
-// Gere as linhas de dados com estilo CSS
-foreach ($result as $row) {
-    echo '<tr>';
-    foreach ($row as $value) {
-        echo '<td style="padding: 8px; border: 1px solid #dddddd;">' . htmlspecialchars($value) . '</td>';
-    }
-    echo '</tr>';
-}
-
-echo '</table>';
-
-// Gere os links de paginação com estilo CSS
-$total_records = $pdo->query("SELECT COUNT(*) FROM tbl_anunciantes")->fetchColumn();
-$base_url = $_SERVER['PHP_SELF'];
-echo paginate($current_page, $total_records, $limit, $base_url);
-} catch(PDOException $e) {
-die("ERROR: Could not execute query. " . $e->getMessage());
-}
-
-// Feche a conexão com o banco de dados
-$pdo = null;
 
 ?>
 
