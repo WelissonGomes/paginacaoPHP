@@ -1,6 +1,6 @@
 <?php
 
-// Include the paginate() function
+// Inclua a função de Paginação
 function paginate($current_page, $total_records, $limit, $base_url, $max_pages_to_display = 4) {
     $total_pages = ceil($total_records / $limit);
     $pagination = '<div class="pagination">';
@@ -52,22 +52,22 @@ function paginate($current_page, $total_records, $limit, $base_url, $max_pages_t
     return $pagination;
 }
 
-// Define database connection constants
+// Constantes de conexão ao banco de dados
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'database_name');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 
-// Set the current page number
+// Defina o número da página atual
 $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
 
-// Set the number of records to display per page
+// Defina o número de resultados exibidos por página
 $limit = 1;
 
-// Calculate the offset for the query based on the current page number and the limit
+// Calcule o offset para a consulta com base no número da página atual e no limite
 $offset = ($current_page - 1) * $limit;
 
-// Create a new PDO object for database connection
+// Crie um novo objeto PDO para conexão com o banco de dados
 try {
     $pdo = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME, DB_USER, DB_PASS);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -75,14 +75,14 @@ try {
     die("ERROR: Could not connect to database. " . $e->getMessage());
 }
 
-// Execute a SELECT query with LIMIT and OFFSET clauses to retrieve the data for the current page
+// Execute uma consulta SELECT com as cláusulas LIMIT e OFFSET para recuperar os dados da página atual
 try {
 $stmt = $pdo->prepare("SELECT * FROM tbl_fotos_exclusivas LIMIT :limit OFFSET :offset");
 $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
 $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-// Define the column header labels manually
+// Definir os rótulos do cabeçalho da coluna manualmente
 $header_labels = array(
     'id_anunciante' => 'ID',
     'nome' => 'Nome',
@@ -95,17 +95,17 @@ $header_labels = array(
 
 );
 
-// Output the results in an HTML table with CSS styling
+// Gere os resultados em uma tabela HTML com estilo CSS
 echo '<table style="border-collapse: collapse; width: 100%; max-width: 800px; margin: auto;">';
 
-// Output the column headers with CSS styling
+// Gere os cabeçalhos das colunas com estilo CSS
 echo '<tr style="background-color: #dddddd;">';
 foreach ($header_labels as $label) {
     echo '<th style="padding: 8px; border: 1px solid #dddddd; text-align: left;">' . htmlspecialchars($label) . '</th>';
 }
 echo '</tr>';
 
-// Output the data rows with CSS styling
+// Gere as linhas de dados com estilo CSS
 foreach ($result as $row) {
     echo '<tr>';
     foreach ($row as $value) {
@@ -116,7 +116,7 @@ foreach ($result as $row) {
 
 echo '</table>';
 
-// Output the pagination links with CSS styling
+// Gere os links de paginação com estilo CSS
 $total_records = $pdo->query("SELECT COUNT(*) FROM tbl_anunciantes")->fetchColumn();
 $base_url = $_SERVER['PHP_SELF'];
 echo paginate($current_page, $total_records, $limit, $base_url);
@@ -124,7 +124,7 @@ echo paginate($current_page, $total_records, $limit, $base_url);
 die("ERROR: Could not execute query. " . $e->getMessage());
 }
 
-// Close the database connection
+// Feche a conexão com o banco de dados
 $pdo = null;
 
 ?>
