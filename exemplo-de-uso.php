@@ -120,7 +120,7 @@ $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
 $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-// Definir os rótulos do cabeçalho da coluna manualmente
+// Defina aqui o nome amigável de cada coluna que indicou na instrução SELECT (Linha 118). Caso tenha utilizado "*", escreva o nome de todas as colunas da tabela.
 $header_labels = array(
     'id_anunciante' => 'ID',
     'nome' => 'Nome',
