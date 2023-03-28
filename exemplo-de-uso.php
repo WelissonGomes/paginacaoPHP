@@ -42,7 +42,7 @@
 <?php
 // Defina as constantes de conexão ao banco de dados ou inclua o arquivo via require ou include
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'solteirasim');
+define('DB_NAME', 'nome-do-banco');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 
