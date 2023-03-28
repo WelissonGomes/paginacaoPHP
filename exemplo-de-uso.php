@@ -1,4 +1,48 @@
+<!-- Inclua o CSS -->
+<style>
+.pagination {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 1em 0;
+}
+
+.pagination a,
+.pagination span {
+    display: inline-block;
+    margin: 0 3px;
+    padding: 5px 10px;
+    border-radius: 3px;
+    background-color: #e8e8e8;
+    text-decoration: none;
+    color: #3a3a3a;
+}
+
+.pagination a:hover {
+    background-color: #b8b8b8;
+}
+
+.pagination a:active {
+    background-color: #a8a8a8;
+}
+
+.pagination .active {
+    background-color: #ff5e5b;
+    color: #fff;
+}
+
+.pagination a[disabled] {
+    background-color: #e8e8e8;
+    color: #888;
+    pointer-events: none;
+}
+</style>
 <?php
+// Defina as constantes de conexão ao banco de dados
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'database_name');
+define('DB_USER', 'root');
+define('DB_PASS', '');
 
 // Inclua a função de Paginação
 function paginate($current_page, $total_records, $limit, $base_url, $max_pages_to_display = 4) {
@@ -51,12 +95,6 @@ function paginate($current_page, $total_records, $limit, $base_url, $max_pages_t
 
     return $pagination;
 }
-
-// Constantes de conexão ao banco de dados
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'database_name');
-define('DB_USER', 'root');
-define('DB_PASS', '');
 
 // Defina o número da página atual
 $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
@@ -128,42 +166,5 @@ die("ERROR: Could not execute query. " . $e->getMessage());
 $pdo = null;
 
 ?>
-<style>
-.pagination {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin: 1em 0;
-}
 
-.pagination a,
-.pagination span {
-    display: inline-block;
-    margin: 0 3px;
-    padding: 5px 10px;
-    border-radius: 3px;
-    background-color: #e8e8e8;
-    text-decoration: none;
-    color: #3a3a3a;
-}
-
-.pagination a:hover {
-    background-color: #b8b8b8;
-}
-
-.pagination a:active {
-    background-color: #a8a8a8;
-}
-
-.pagination .active {
-    background-color: #ff5e5b;
-    color: #fff;
-}
-
-.pagination a[disabled] {
-    background-color: #e8e8e8;
-    color: #888;
-    pointer-events: none;
-}
-</style>
 
