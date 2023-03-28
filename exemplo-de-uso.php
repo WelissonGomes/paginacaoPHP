@@ -10,11 +10,6 @@ function paginate($current_page, $total_records, $limit, $base_url, $max_pages_t
         $pagination .= '<a href="' . $base_url . '?page=' . ($current_page - 1) . '">&laquo; Anterior</a>';
     }
 
-    // Link para a primeira página
-    if ($current_page > 1) {
-        $pagination .= '<a href="' . $base_url . '?page=1">Primeiro</a>';
-    }
-
     // Início e fim dos links de páginas individuais
     $start = max(1, $current_page - floor($max_pages_to_display / 2));
     $end = min($total_pages, $start + $max_pages_to_display - 1);
@@ -24,7 +19,10 @@ function paginate($current_page, $total_records, $limit, $base_url, $max_pages_t
 
     // Mostrar "..." antes dos números das páginas, se necessário
     if ($start > 1) {
-        $pagination .= '<span>...</span>';
+        $pagination .= '<a href="' . $base_url . '?page=1">1</a>';
+        if ($start > 2) {
+            $pagination .= '<span>...</span>';
+        }
     }
 
     // Links para as páginas individuais
@@ -38,12 +36,10 @@ function paginate($current_page, $total_records, $limit, $base_url, $max_pages_t
 
     // Mostrar "..." após os números das páginas, se necessário
     if ($end < $total_pages) {
-        $pagination .= '<span>...</span>';
-    }
-
-    // Link para a última página
-    if ($current_page < $total_pages) {
-        $pagination .= '<a href="' . $base_url . '?page=' . $total_pages . '">Último</a>';
+        if ($end < $total_pages - 1) {
+            $pagination .= '<span>...</span>';
+        }
+        $pagination .= '<a href="' . $base_url . '?page=' . $total_pages . '">' . $total_pages . '</a>';
     }
 
     // Link para a próxima página
